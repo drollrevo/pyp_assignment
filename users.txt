@@ -1,2 +1,2 @@
-US001 1234 User One 1995-03-12
-US002 1234 User Two 1992-08-21
+{'Username': 'q', 'Password': '1', 'First Name': 'q', 'Last Name': 'q', 'Date of Birth': 'q', 'Contact Number': 'q', 'Email': 'q'}
+{'Username': 'aina', 'Password': 'jsjsjjs', 'First Name': 'aina', 'Last Name': 'a', 'Date of Birth': '', 'Contact Number': '', 'Email': ''}

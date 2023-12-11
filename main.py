@@ -1,24 +1,25 @@
 import admin
 import user
-
-def mainMenu():
+def main():
     while True:
         print("Hall Symphony:")
         print("----------------")
         print("1) Login as Admin")
         print("2) Login as User")
         print("3) Exit Program")
-        choice = input("Enter your choice: ")
+        print("----------------")
+        choice = input("Enter your choice:")
         if choice == '1':
-            admin.login()
+            admin.admin_login()
         elif choice == '2':
-            user.login()
+            user.user_login()
         elif choice == '3':
             print("System exited")
             exit()
         else:
             print("Invalid Choice!")
-            mainMenu()
+            main()
 
 #start the program
-mainMenu()
+if __name__ == "__main__":
+    main()
