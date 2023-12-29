@@ -1,5 +1,7 @@
 import admin
 import user
+
+
 def main():
     while True:
         print("Hall Symphony:")
@@ -20,6 +22,7 @@ def main():
             print("Invalid Choice!")
             main()
 
-#start the program
+
+# start the program
 if __name__ == "__main__":
     main()

@@ -97,3 +97,7 @@ def admin_menu():
         else:
             print("Invalid!")
             admin_menu()
+
+
+if __name__ == "__main__":
+    main.main()

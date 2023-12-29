@@ -1,0 +1,1 @@
+{'Username': 'q', 'Event Name': 'qwe', 'Event Description': 'qwe', 'Hall ID': '1', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 06:00', 'Payment Price': 1800.0}
