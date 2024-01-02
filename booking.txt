@@ -1,1 +1,10 @@
-{'Username': 'q', 'Event Name': 'qwe', 'Event Description': 'qwe', 'Hall ID': '2', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-02 00:00', 'Payment Price': 2400.0}
+{'Username': 'q', 'Event Name': 'e', 'Event Description': 'e', 'Hall ID': '2', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-02 00:00', 'Payment Price': 2400.0}
+{'Username': 'q', 'Event Name': 'qwe', 'Event Description': 'qwe', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 'qwe', 'Event Description': 'qwe', 'Hall ID': '1', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2025-01-01 00:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 'w', 'Event Description': 'w', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 'q', 'Event Description': 'q', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 'w', 'Event Description': 'w', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 'a', 'Event Description': 'a', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 0.0}
+{'Username': 'q', 'Event Name': 's', 'Event Description': 's', 'Hall ID': '4', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 02:00', 'Payment Price': 24.0}
+{'Username': 'q', 'Event Name': 'd', 'Event Description': 'd', 'Hall ID': '6', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 10:00', 'Payment Price': 230.0}
+{'Username': 'zxc', 'Event Name': 'zxc', 'Event Description': 'zxc', 'Hall ID': '1', 'Date and Time Start': '2024-01-01 00:00', 'Date and Time End': '2024-01-01 00:30', 'Payment Price': 150.0}

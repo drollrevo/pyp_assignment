@@ -1,7 +1,6 @@
 import admin
 import user
 
-
 def main():
     while True:
         print("Hall Symphony:")

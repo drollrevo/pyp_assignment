@@ -3,6 +3,22 @@ from datetime import datetime
 
 users_data = []
 booking_data = []
+halls_data = []
+
+
+def load_hall_type():
+    halls_data = []
+    try:
+        with open("halls.txt", "r") as file:
+            for line in file:
+                hall_info = eval(line)
+                halls_data.append(hall_info)
+    except FileNotFoundError:
+        pass
+
+    return halls_data
+
+
 
 
 def load_users_data():
@@ -89,25 +105,40 @@ def login():
 
 
 def calculate_payment(hall_id, date_time_start, date_time_end):
-    hall_type = get_hall_type_by_id(hall_id)
-    rent_rate = get_rent_rate_by_hall_type(hall_type)
+    # hall_type
+    get_hall_type_by_id(hall_id)
+    rent_rate = get_rent_rate_by_hall_type(hall_id)
 
     total_hours = calculate_total_hours(date_time_start, date_time_end)
-    print(f"Total Hours: {total_hours}")
     payment_price = rent_rate * total_hours
+
+    print(f"Hall ID: {hall_id}")
+    print(f"Rent Rate: {rent_rate}")
+    print(f"Total Hours: {total_hours}")
     print(f"Payment Price: {payment_price}")
 
     return payment_price
 
 
+
+
 def get_hall_type_by_id(hall_id):
-    hall_types = {"1": "Auditorium", "2": "Banquet Hall", "3": "Meeting Room"}
-    return hall_types.get(hall_id, "Unknown")
+    halls_data = load_hall_type()
+    for hall in halls_data:
+        if hall['Hall ID'] == str(hall_id):
+            return hall['Hall Name']
+    return "Unknown"
 
 
-def get_rent_rate_by_hall_type(hall_type):
-    rent_rates = {"Auditorium": 300.00, "Banquet Hall": 100.00, "Meeting Room": 50.00}
-    return rent_rates.get(hall_type, 0.00)
+def get_rent_rate_by_hall_type(hall_id):
+    halls_data = load_hall_type()
+    for hall in halls_data:
+        if hall['Hall ID'] == str(hall_id):
+            return float(hall['Rate Price per Day'])
+
+    return 0.00
+
+
 
 
 def calculate_total_hours(date_time_start, date_time_end):
@@ -115,23 +146,28 @@ def calculate_total_hours(date_time_start, date_time_end):
         rent_datetime_start = datetime.strptime(date_time_start, "%Y-%m-%d %H:%M")
         rent_datetime_end = datetime.strptime(date_time_end, "%Y-%m-%d %H:%M")
         time_difference = rent_datetime_end - rent_datetime_start
-        total_hours = time_difference.total_seconds() / 3600
+        total_hours = max(time_difference.total_seconds() / 3600, 0)
 
-        return max(total_hours, 0)
+        return total_hours
     except ValueError:
         print("Invalid date and time format. Please enter in the format: YYYY-MM-DD HH:MM")
         return 0
 
 
+
 def perform_booking(username):
+    halls_data = load_hall_type()
     print("Perform Booking Functionality")
     event_name = input("Enter event name: ")
     event_description = input("Enter event description: ")
 
-    print("1: Auditorium, 2: Banquet Hall, 3: Meeting Room")
+    print("Available Hall Types:")
+    for hall in halls_data:
+        print(f"{hall['Hall ID']}: {hall['Hall Name']} - {hall['Rate Price per Day']} RM")
+
     while True:
         hall_id = input("Enter hall ID: ")
-        if hall_id in ["1", "2", "3"]:
+        if any(hall['Hall ID'] == hall_id for hall in halls_data):
             break
         else:
             print("Invalid hall ID. Please enter a valid ID.")
@@ -149,7 +185,7 @@ def perform_booking(username):
     payment_price = calculate_payment(hall_id, date_time_start, date_time_end)
 
     booking = {
-        'Username': username,  # Added username to the booking
+        'Username': username,
         'Event Name': event_name,
         'Event Description': event_description,
         'Hall ID': hall_id,
@@ -169,8 +205,16 @@ def perform_booking(username):
     print(f"Payment Price: {payment_price} RM\n")
 
 
+
+
 def view_booking(username):
     print("\nView Booking Information Functionality")
+
+    # Clear existing booking data
+    booking_data.clear()
+
+    # Load fresh booking data from the file
+    load_booking_data()
 
     user_bookings = [booking for booking in booking_data if booking['Username'] == username]
 
@@ -258,7 +302,6 @@ def edit_booking(username):
             print("Invalid index. Please enter a valid index.")
     except ValueError:
         print("Invalid input. Please enter a valid index.")
-
 
 
 def search_booking(username):

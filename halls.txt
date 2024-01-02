@@ -1,0 +1,6 @@
+{'Hall ID': '1', 'Hall Name': 'Auditorium', 'Hall Description': 'Spacious auditorium with stage', 'Hall Pax': '1000', 'Hall Availability': 'Available', 'Rate Price per Day': '300.00'}
+{'Hall ID': '2', 'Hall Name': 'Banquet Hall', 'Hall Description': 'Elegant banquet hall for events', 'Hall Pax': '300', 'Hall Availability': 'Available', 'Rate Price per Day': '100.00'}
+{'Hall ID': '3', 'Hall Name': 'Meeting Room', 'Hall Description': 'Small meeting room for conferences', 'Hall Pax': '30', 'Hall Availability': 'Available', 'Rate Price per Day': '50.00'}
+{'Hall ID': '4', 'Hall Name': 'qwe', 'Hall Description': 'qwe', 'Hall Pax': '4', 'Hall Availability': 'y', 'Rate Price per Day': '12.00'}
+{'Hall ID': '5', 'Hall Name': 'qsx', 'Hall Description': 'qsx', 'Hall Pax': '34', 'Hall Availability': 'y', 'Rate Price per Day': '34.00'}
+{'Hall ID': '6', 'Hall Name': 'w', 'Hall Description': 'w', 'Hall Pax': '4', 'Hall Availability': 'y', 'Rate Price per Day': '23.00'}

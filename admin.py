@@ -1,7 +1,8 @@
 import main
+import user
 import datetime
 
-hall_data = []
+hall_type_data = []
 booking_data = []
 user_data = []
 
@@ -46,68 +47,65 @@ def hall_management():
         hall_management()
 
 
-def load_hall_data():
-    try:
-        with open("hall_data.txt", "r") as file:
-            for line in file:
-                hall_dict = eval(line)
-                hall_data.append(hall_dict)
-    except FileNotFoundError:
-        pass
-
-
 def enter_hall_information():
-    print("\nEnter Hall Information:")
+    user.load_hall_type()
     hall_id = input("Enter Hall ID: ")
     hall_name = input("Enter Hall Name: ")
     hall_description = input("Enter Hall Description: ")
     hall_pax = input("Enter Hall Pax: ")
-    hall_availability = input("Enter Hall Availability (Y/N): ")
-    hall_rate_price = input("Enter Rate Price per Day: ")
+    hall_availability = input("Enter Hall Availability: ")
+    hall_rate = input("Enter Rate Price per Day: ")
 
-    hall = {
+    new_hall = {
         'Hall ID': hall_id,
         'Hall Name': hall_name,
         'Hall Description': hall_description,
         'Hall Pax': hall_pax,
         'Hall Availability': hall_availability,
-        'Rate Price per Day': hall_rate_price
+        'Rate Price per Day': hall_rate
     }
 
-    hall_data.append(hall)
-    print("Hall information added successfully.")
+    hall_type_data.append(new_hall)
     save_hall_data()
+    print(f"Hall {hall_name} added successfully!\n")
     hall_management()
 
 
 def view_all_hall_information():
     print("\nView All Hall Information:")
-    for hall in hall_data:
-        print(f"Hall ID: {hall['Hall ID']}, Hall Name: {hall['Hall Name']}, "
-              f"Hall Description: {hall['Hall Description']}, Hall Pax: {hall['Hall Pax']}, "
-              f"Hall Availability: {hall['Hall Availability']}, Rate Price per Day: {hall['Rate Price per Day']}")
+    hall_type_data = user.load_hall_type()
+    for hall_info in hall_type_data:
+        print(f'Hall ID: {hall_info["id"]}, Hall Name: {hall_info["type"]}, '
+              f'Hall Description: {hall_info["description"]}, Hall Pax: {hall_info["pax"]}, '
+              f'Hall Availability: {hall_info["availability_status"]}, Rate Price per Day: {hall_info["price"]:.2f}')
 
-    hall_management()
+
+
 
 
 def search_hall_information():
+    hall_type_data = user.load_hall_type()  # Load hall data only once
     print("\nSearch Hall Information:")
     search_term = input("Enter hall name: ")
 
-    search_results = [hall for hall in hall_data
-                      if search_term.lower() in hall['Hall Name'].lower() or
-                      search_term.lower() in hall['Hall Description'].lower()]
+    search_results = [hall_info for hall_info in hall_type_data
+                      if search_term.lower() in hall_info['type'].lower()]
 
     if search_results:
-        print("Search Results:")
-        for hall in search_results:
-            print(f"Hall ID: {hall['Hall ID']}, Hall Name: {hall['Hall Name']}, "
-                  f"Hall Description: {hall['Hall Description']}, Hall Pax: {hall['Hall Pax']}, "
-                  f"Hall Availability: {hall['Hall Availability']}, Rate Price per Day: {hall['Rate Price per Day']}")
+        for hall_info in search_results:
+            print(f"Hall ID: {hall_info['id']}, Hall Name: {hall_info['type']}, "
+                  f"Hall Description: {hall_info['description']}, Hall Pax: {hall_info['pax']}, "
+                  f"Hall Availability: {hall_info['availability_status']}, Rate Price per Day: {hall_info['price']:.2f}")
     else:
         print(f"No results found for '{search_term}'.")
 
     hall_management()
+
+
+
+
+
+
 
 
 def edit_hall_information():
@@ -117,23 +115,23 @@ def edit_hall_information():
 
     try:
         hall_id_to_edit = input("Enter the Hall ID you want to edit: ")
-        hall = next((h for h in hall_data if h['Hall ID'] == hall_id_to_edit), None)
+        hall = next((h for h in hall_type_data if h['id'] == hall_id_to_edit), None)
 
         if hall:
-            hall_name = input(f"Current Hall Name: {hall['Hall Name']}. Enter new Hall Name: ")
+            hall_name = input(f"Current Hall Name: {hall['type']}. Enter new Hall Name: ")
             hall_description = input(
-                f"Current Hall Description: {hall['Hall Description']}. Enter new Hall Description: ")
-            hall_pax = input(f"Current Hall Pax: {hall['Hall Pax']}. Enter new Hall Pax: ")
+                f"Current Hall Description: {hall['description']}. Enter new Hall Description: ")
+            hall_pax = input(f"Current Hall Pax: {hall['pax']}. Enter new Hall Pax: ")
             hall_availability = input(
-                f"Current Hall Availability: {hall['Hall Availability']}. Enter new Hall Availability (Y/N): ")
+                f"Current Hall Availability: {hall['availability_status']}. Enter new Hall Availability (Y/N): ")
             hall_rate_price = input(
-                f"Current Rate Price per Day: {hall['Rate Price per Day']}. Enter new Rate Price per Day: ")
+                f"Current Rate Price per Day: {hall['price']}. Enter new Rate Price per Day: ")
 
-            hall['Hall Name'] = hall_name
-            hall['Hall Description'] = hall_description
-            hall['Hall Pax'] = hall_pax
-            hall['Hall Availability'] = hall_availability
-            hall['Rate Price per Day'] = hall_rate_price
+            hall['type'] = hall_name
+            hall['description'] = hall_description
+            hall['pax'] = hall_pax
+            hall['availability_status'] = hall_availability
+            hall['price'] = hall_rate_price
 
             save_hall_data()
 
@@ -151,10 +149,10 @@ def delete_hall_information():
 
     try:
         hall_id_to_delete = input("Enter the Hall ID you want to delete: ")
-        hall = next((h for h in hall_data if h['Hall ID'] == hall_id_to_delete), None)
+        hall = next((h for h in hall_type_data if h['id'] == hall_id_to_delete), None)
 
         if hall:
-            hall_data.remove(hall)
+            hall_type_data.remove(hall)
             save_hall_data()
             print("Hall deleted successfully.")
         else:
@@ -164,9 +162,14 @@ def delete_hall_information():
 
 
 def save_hall_data():
-    with open("hall_data.txt", "w") as file:
-        for hall in hall_data:
-            file.write(str(hall) + "\n")
+    with open("halls.txt", "a") as file:
+        for hall in hall_type_data:
+            hall_str = f"{hall['id']}, {hall['type']}, {hall['description']}, {hall['pax']}, {hall['availability_status']}, {hall['price']:.2f}"
+            file.write(hall_str + "\n")
+
+
+
+
 
 
 def booking_management():
@@ -197,11 +200,11 @@ def booking_management():
 def view_all_booking_information():
     print("\nView All Booking Information:")
     for booking in booking_data:
-        print(f"Event Name: {booking['Event Name']}, "
-              f"Hall ID: {booking['Hall ID']}, "
-              f"Date and Time Start: {booking['Date and Time Start']}, "
-              f"Date and Time End: {booking['Date and Time End']}, "
-              f"Payment Price: {booking['Payment Price']} RM")
+        print(f"Event Name: {booking['event_name']}, "
+              f"Hall ID: {booking['hall_id']}, "
+              f"Date and Time Start: {booking['date_time_start']}, "
+              f"Date and Time End: {booking['date_time_end']}, "
+              f"Payment Price: {booking['payment_price']} RM")
 
     booking_management()
 
@@ -211,15 +214,15 @@ def search_booking_information():
     search_term = input("Enter username or email to search for bookings: ")
 
     search_results = [booking for booking in booking_data
-                      if search_term.lower() in booking['Username'].lower() or
-                      search_term.lower() in booking['Email'].lower()]
+                      if search_term.lower() in booking['username'].lower() or
+                      search_term.lower() in booking['email'].lower()]
 
     if search_results:
         print(f"Search results for '{search_term}':")
         for index, booking in enumerate(search_results, start=1):
-            print(f"{index}. Event Name: {booking['Event Name']}, "
-                  f"Date and Time: {booking['Date and Time']}, "
-                  f"Payment Price: {booking['Payment Price']} RM")
+            print(f"{index}. Event Name: {booking['event_name']}, "
+                  f"Date and Time: {booking['date_time']}, "
+                  f"Payment Price: {booking['payment_price']} RM")
     else:
         print(f"No bookings found for '{search_term}'.")
 
@@ -227,12 +230,7 @@ def search_booking_information():
 
 
 def calculate_payment(hall_id, date_time_start, date_time_end):
-    # На основе данных о зале и времени бронирования рассчитайте стоимость бронирования.
-    # Это может включать в себя проверку доступности зала, расчет времени бронирования и т. д.
-    # В данном примере предполагается, что стоимость зависит от разницы между date_time_end и date_time_start.
-
-    # Пример (замените этот код на ваш вариант расчета):
-    rate_price_per_day = next((hall['Rate Price per Day'] for hall in hall_data if hall['Hall ID'] == hall_id), None)
+    rate_price_per_day = next((hall['price'] for hall in hall_type_data if hall['id'] == hall_id), None)
     if rate_price_per_day is not None:
         try:
             date_time_start = datetime.datetime.strptime(date_time_start, "%Y-%m-%d %H:%M")
@@ -255,20 +253,20 @@ def edit_booking_information():
         if 0 <= booking_index < len(booking_data):
             booking = booking_data[booking_index]
 
-            event_name = input(f"Current Event Name: {booking['Event Name']}. Enter new Event Name: ")
-            hall_id = input(f"Current Hall ID: {booking['Hall ID']}. Enter new Hall ID: ")
-            date_time_start = input(f"Current Date and Time Start: {booking['Date and Time Start']}. "
+            event_name = input(f"Current Event Name: {booking['event_name']}. Enter new Event Name: ")
+            hall_id = input(f"Current Hall ID: {booking['hall_id']}. Enter new Hall ID: ")
+            date_time_start = input(f"Current Date and Time Start: {booking['date_time_start']}. "
                                     f"Enter new Date and Time Start (YYYY-MM-DD HH:MM): ")
-            date_time_end = input(f"Current Date and Time End: {booking['Date and Time End']}. "
+            date_time_end = input(f"Current Date and Time End: {booking['date_time_end']}. "
                                   f"Enter new Date and Time End (YYYY-MM-DD HH:MM): ")
 
             payment_price = calculate_payment(hall_id, date_time_start, date_time_end)
 
-            booking['Event Name'] = event_name
-            booking['Hall ID'] = hall_id
-            booking['Date and Time Start'] = date_time_start
-            booking['Date and Time End'] = date_time_end
-            booking['Payment Price'] = payment_price
+            booking['event_name'] = event_name
+            booking['hall_id'] = hall_id
+            booking['date_time_start'] = date_time_start
+            booking['date_time_end'] = date_time_end
+            booking['payment_price'] = payment_price
 
             save_booking_data()
 

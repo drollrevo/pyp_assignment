@@ -1,1 +1,0 @@
-{'Hall ID': '4', 'Hall Name': 'e', 'Hall Description': 'e', 'Hall Pax': 'e', 'Hall Availability': 'y', 'Rate Price per Day': '34'}
