@@ -1,10 +1,11 @@
 import main
 import user
 import datetime
+from datetime import datetime
 
-hall_type_data = []
+halls_data = []
 booking_data = []
-user_data = []
+users_data = []
 
 
 def admin_login():
@@ -47,9 +48,28 @@ def hall_management():
         hall_management()
 
 
+def save_hall_data(halls_data):
+    with open("halls.txt", "a") as file:
+        for hall in halls_data:
+            file.write(str(hall) + "\n")
+
+
+def save_hall_data_danger(halls_data):
+    with open("halls.txt", "w") as file:
+        for hall in halls_data:
+            file.write(str(hall) + "\n")
+
+
 def enter_hall_information():
-    user.load_hall_type()
+    print("Enter Hall Information:")
+
     hall_id = input("Enter Hall ID: ")
+
+    # Check if the hall ID already exists
+    while any(hall['Hall ID'] == hall_id for hall in halls_data):
+        print("Hall ID already exists. Please choose another one.")
+        hall_id = input("Enter Hall ID: ")
+
     hall_name = input("Enter Hall Name: ")
     hall_description = input("Enter Hall Description: ")
     hall_pax = input("Enter Hall Pax: ")
@@ -62,114 +82,109 @@ def enter_hall_information():
         'Hall Description': hall_description,
         'Hall Pax': hall_pax,
         'Hall Availability': hall_availability,
-        'Rate Price per Day': hall_rate
+        'Rate Price per Day': f'{float(hall_rate):.2f}'  # Convert rate to float and format as string
     }
 
-    hall_type_data.append(new_hall)
-    save_hall_data()
+    halls_data.append(new_hall)
+    save_hall_data(halls_data)
+
     print(f"Hall {hall_name} added successfully!\n")
     hall_management()
 
 
 def view_all_hall_information():
+    halls_data = user.load_hall_type()
     print("\nView All Hall Information:")
-    hall_type_data = user.load_hall_type()
-    for hall_info in hall_type_data:
-        print(f'Hall ID: {hall_info["id"]}, Hall Name: {hall_info["type"]}, '
-              f'Hall Description: {hall_info["description"]}, Hall Pax: {hall_info["pax"]}, '
-              f'Hall Availability: {hall_info["availability_status"]}, Rate Price per Day: {hall_info["price"]:.2f}')
-
-
-
+    for hall_info in halls_data:
+        print(f"Hall ID: {hall_info['Hall ID']}, "
+              f"Hall Name: {hall_info['Hall Name']}, "
+              f"Hall Description: {hall_info['Hall Description']}, "
+              f"Hall Pax: {hall_info['Hall Pax']}, "
+              f"Hall Availability: {hall_info['Hall Availability']}, "
+              f"Rate Price per Day: {hall_info['Rate Price per Day']}")
 
 
 def search_hall_information():
-    hall_type_data = user.load_hall_type()  # Load hall data only once
+    halls_data = user.load_hall_type()  # Load hall data only once
     print("\nSearch Hall Information:")
     search_term = input("Enter hall name: ")
 
-    search_results = [hall_info for hall_info in hall_type_data
-                      if search_term.lower() in hall_info['type'].lower()]
+    search_results = [hall_info for hall_info in halls_data
+                      if search_term.lower() in hall_info['Hall Name'].lower()]
 
     if search_results:
         for hall_info in search_results:
-            print(f"Hall ID: {hall_info['id']}, Hall Name: {hall_info['type']}, "
-                  f"Hall Description: {hall_info['description']}, Hall Pax: {hall_info['pax']}, "
-                  f"Hall Availability: {hall_info['availability_status']}, Rate Price per Day: {hall_info['price']:.2f}")
+            print(f"Hall ID: {hall_info['Hall ID']}, "
+                  f"Hall Name: {hall_info['Hall Name']}, "
+                  f"Hall Description: {hall_info['Hall Description']}, "
+                  f"Hall Pax: {hall_info['Hall Pax']}, "
+                  f"Hall Availability: {hall_info['Hall Availability']}, "
+                  f"Rate Price per Day: {hall_info['Rate Price per Day']}")
     else:
         print(f"No results found for '{search_term}'.")
-
     hall_management()
 
 
-
-
-
-
-
-
 def edit_hall_information():
+    halls_data = user.load_hall_type()
     print("\nEdit Hall Information Functionality")
 
     view_all_hall_information()
-
     try:
         hall_id_to_edit = input("Enter the Hall ID you want to edit: ")
-        hall = next((h for h in hall_type_data if h['id'] == hall_id_to_edit), None)
+        hall = next((h for h in halls_data if h['Hall ID'] == hall_id_to_edit), None)
 
         if hall:
-            hall_name = input(f"Current Hall Name: {hall['type']}. Enter new Hall Name: ")
+            print(f"Editing Hall ID: {hall['Hall ID']}")
+
+            # Add a check if the hall can be edited (you can customize this condition)
+            # For example, check if the hall is not currently booked
+
+            hall_name = input(f"Current Hall Name: {hall['Hall Name']}. Enter new Hall Name: ")
             hall_description = input(
-                f"Current Hall Description: {hall['description']}. Enter new Hall Description: ")
-            hall_pax = input(f"Current Hall Pax: {hall['pax']}. Enter new Hall Pax: ")
+                f"Current Hall Description: {hall['Hall Description']}. Enter new Hall Description: ")
+            hall_pax = input(f"Current Hall Pax: {hall['Hall Pax']}. Enter new Hall Pax: ")
             hall_availability = input(
-                f"Current Hall Availability: {hall['availability_status']}. Enter new Hall Availability (Y/N): ")
+                f"Current Hall Availability: {hall['Hall Availability']}. Enter new Hall Availability (Y/N): ")
             hall_rate_price = input(
-                f"Current Rate Price per Day: {hall['price']}. Enter new Rate Price per Day: ")
+                f"Current Rate Price per Day: {hall['Rate Price per Day']}. Enter new Rate Price per Day: ")
 
-            hall['type'] = hall_name
-            hall['description'] = hall_description
-            hall['pax'] = hall_pax
-            hall['availability_status'] = hall_availability
-            hall['price'] = hall_rate_price
+            hall['Hall Name'] = hall_name
+            hall['Hall Description'] = hall_description
+            hall['Hall Pax'] = hall_pax
+            hall['Hall Availability'] = hall_availability
+            hall['Rate Price per Day'] = float(hall_rate_price)  # Convert rate to float
 
-            save_hall_data()
+            save_hall_data_danger(halls_data)
 
             print("Hall edited successfully.")
         else:
             print(f"No hall found with Hall ID: {hall_id_to_edit}.")
     except ValueError:
         print("Invalid input. Please enter a valid Hall ID.")
+    hall_management()
 
 
 def delete_hall_information():
     print("\nDelete Hall Functionality")
 
+    halls_data = user.load_hall_type()
     view_all_hall_information()
 
     try:
         hall_id_to_delete = input("Enter the Hall ID you want to delete: ")
-        hall = next((h for h in hall_type_data if h['id'] == hall_id_to_delete), None)
+        hall = next((h for h in halls_data if h['Hall ID'] == hall_id_to_delete), None)
 
         if hall:
-            hall_type_data.remove(hall)
-            save_hall_data()
+            halls_data.remove(hall)
+            save_hall_data_danger(halls_data)
             print("Hall deleted successfully.")
         else:
             print(f"No hall found with Hall ID: {hall_id_to_delete}.")
     except ValueError:
         print("Invalid input. Please enter a valid Hall ID.")
 
-
-def save_hall_data():
-    with open("halls.txt", "a") as file:
-        for hall in hall_type_data:
-            hall_str = f"{hall['id']}, {hall['type']}, {hall['description']}, {hall['pax']}, {hall['availability_status']}, {hall['price']:.2f}"
-            file.write(hall_str + "\n")
-
-
-
-
+    hall_management()
 
 
 def booking_management():
@@ -197,32 +212,46 @@ def booking_management():
         booking_management()
 
 
-def view_all_booking_information():
-    print("\nView All Booking Information:")
-    for booking in booking_data:
-        print(f"Event Name: {booking['event_name']}, "
-              f"Hall ID: {booking['hall_id']}, "
-              f"Date and Time Start: {booking['date_time_start']}, "
-              f"Date and Time End: {booking['date_time_end']}, "
-              f"Payment Price: {booking['payment_price']} RM")
+def load_booking_data():
+    try:
+        with open("booking.txt", "r") as file:
+            booking_data = [eval(line.strip()) for line in file]
+        return booking_data
+    except Exception as e:
+        print(f"Error loading booking data: {e}")
+        return []
 
-    booking_management()
+
+def view_all_booking_information():
+    booking_data = load_booking_data()
+
+    if booking_data:
+        print("\nView All Booking Information:")
+        for index, booking in enumerate(booking_data, start=1):
+            print(f"{index}. Username: {booking.get('Username', 'N/A')}, "
+                  f"Event Name: {booking.get('Event Name', 'N/A')}, "
+                  f"Hall ID: {booking.get('Hall ID', 'N/A')}, "
+                  f"Date and Time Start: {booking.get('Date and Time Start', 'N/A')}, "
+                  f"Date and Time End: {booking.get('Date and Time End', 'N/A')}, "
+                  f"Payment Price: {booking.get('Payment Price', 'N/A')} RM")
+    else:
+        print("Error loading booking data.")
 
 
 def search_booking_information():
+    booking_data = load_booking_data()
     print("\nSearch Booking Information:")
-    search_term = input("Enter username or email to search for bookings: ")
+    search_term = input("Enter username to search for bookings: ")
 
     search_results = [booking for booking in booking_data
-                      if search_term.lower() in booking['username'].lower() or
-                      search_term.lower() in booking['email'].lower()]
+                      if 'Username' in booking and search_term.lower() in booking['Username'].lower()]
 
     if search_results:
         print(f"Search results for '{search_term}':")
         for index, booking in enumerate(search_results, start=1):
-            print(f"{index}. Event Name: {booking['event_name']}, "
-                  f"Date and Time: {booking['date_time']}, "
-                  f"Payment Price: {booking['payment_price']} RM")
+            print(f"{index}. Event Name: {booking.get('Event Name', 'N/A')}, "
+                  f"Date and Time: {booking.get('Date and Time', 'N/A')}, "
+                  f"Payment Price: {booking.get('Payment Price', 'N/A')} RM")
     else:
         print(f"No bookings found for '{search_term}'.")
 
@@ -230,7 +259,7 @@ def search_booking_information():
 
 
 def calculate_payment(hall_id, date_time_start, date_time_end):
-    rate_price_per_day = next((hall['price'] for hall in hall_type_data if hall['id'] == hall_id), None)
+    rate_price_per_day = next((hall['price'] for hall in halls_data if hall['id'] == hall_id), None)
     if rate_price_per_day is not None:
         try:
             date_time_start = datetime.datetime.strptime(date_time_start, "%Y-%m-%d %H:%M")
@@ -250,25 +279,40 @@ def edit_booking_information():
 
     try:
         booking_index = int(input("Enter the index of the booking you want to edit: ")) - 1
+        booking_data = load_booking_data()
+
         if 0 <= booking_index < len(booking_data):
             booking = booking_data[booking_index]
 
-            event_name = input(f"Current Event Name: {booking['event_name']}. Enter new Event Name: ")
-            hall_id = input(f"Current Hall ID: {booking['hall_id']}. Enter new Hall ID: ")
-            date_time_start = input(f"Current Date and Time Start: {booking['date_time_start']}. "
-                                    f"Enter new Date and Time Start (YYYY-MM-DD HH:MM): ")
-            date_time_end = input(f"Current Date and Time End: {booking['date_time_end']}. "
-                                  f"Enter new Date and Time End (YYYY-MM-DD HH:MM): ")
+            cur_username = input(f"Current Username: {booking.get('Username', 'N/A')}. Enter new Username: ")
+            event_name = input(f"Current Event Name: {booking.get('Event Name', 'N/A')}. Enter new Event Name: ")
+            cur_desc = input(f"Current Desc: {booking.get('Event Description', 'N/A')}. Enter new Event Description: ")
+            hall_id = input(f"Current Hall ID: {booking.get('Hall ID', 'N/A')}. Enter new Hall ID: ")
 
-            payment_price = calculate_payment(hall_id, date_time_start, date_time_end)
+            while True:
+                date_time_start = input("Enter new date and time of renting start (YYYY-MM-DD HH:MM): ")
+                date_time_end = input("Enter new date and time of renting end (YYYY-MM-DD HH:MM): ")
+                try:
+                    datetime.strptime(date_time_start, "%Y-%m-%d %H:%M")
+                    datetime.strptime(date_time_end, "%Y-%m-%d %H:%M")
+                    break
+                except ValueError:
+                    print("Invalid date and time format. Please enter in the format: YYYY-MM-DD HH:MM")
+            del booking_data[booking_index]
+            payment_price = user.calculate_payment(hall_id, date_time_start, date_time_end)
 
-            booking['event_name'] = event_name
-            booking['hall_id'] = hall_id
-            booking['date_time_start'] = date_time_start
-            booking['date_time_end'] = date_time_end
-            booking['payment_price'] = payment_price
-
-            save_booking_data()
+            booking_dict = {
+                'Username': cur_username,
+                'Event Name': event_name,
+                'Event Description': cur_desc,
+                'Hall ID': hall_id,
+                'Date and Time Start': date_time_start,
+                'Date and Time End': date_time_end,
+                'Payment Price': payment_price
+            }
+            booking_data.append(booking_dict)
+            print(booking_data)
+            save_booking_data1(booking_data)
 
             print("Booking edited successfully.")
         else:
@@ -276,26 +320,43 @@ def edit_booking_information():
     except ValueError:
         print("Invalid input. Please enter a valid index.")
 
+    booking_management()
+
+
+# def save_booking_data1(bookings, filename='booking.txt'):
+#     try:
+#         with open(filename, 'w') as file:
+#             for booking in bookings:
+#                 file.write(str(booking) + '\n')
+#         print("Booking data saved successfully.")
+#     except Exception as e:
+#         print(f"Error saving booking data: {e}")
+def save_booking_data1(booking_data):
+    with open("booking.txt", "w") as file:
+        for booking_dict in booking_data:
+            file.write(str(booking_dict) + "\n")
 
 def delete_booking_information():
     print("\nDelete Booking Functionality")
 
     view_all_booking_information()
-
+    booking_data = load_booking_data()
     try:
         booking_index = int(input("Enter the index of the booking you want to delete: ")) - 1
         if 0 <= booking_index < len(booking_data):
             del booking_data[booking_index]
-            save_booking_data()
+            save_booking_data1(booking_data)
             print("Booking deleted successfully.")
         else:
             print("Invalid index. Please enter a valid index.")
     except ValueError:
         print("Invalid input. Please enter a valid index.")
+    booking_management()
+
 
 
 def save_booking_data():
-    with open("booking.txt", "w") as file:
+    with open("booking.txt", "a") as file:
         for booking in booking_data:
             file.write(str(booking) + "\n")
 
@@ -303,9 +364,10 @@ def save_booking_data():
 def user_management():
     print("User management")
     print("1) View all the user information")
-    print("2) Search user information using the first or last name")
+    print("2) Search user information using username")
     print("3) Edit the user information")
     print("4) Delete the user from login")
+    print("5) Admin menu")
     choice = input("Enter your choice: ")
     if choice == '1':
         view_all_user_information()
@@ -315,39 +377,52 @@ def user_management():
         edit_user_information()
     elif choice == '4':
         delete_user_information()
+    elif choice == '5':
+        admin_menu()
     else:
         print("Invalid choice. Please try again.")
         user_management()
 
+def load_users_data():
+    try:
+        with open("users.txt", "r") as file:
+            users_data = [eval(line.strip()) for line in file]
+        return users_data
+    except FileNotFoundError:
+        pass
 
 def view_all_user_information():
     print("\nView All User Information:")
-    for user in user_data:
-        print(f"Username: {user['Username']}, First Name: {user['First Name']}, "
-              f"Last Name: {user['Last Name']}, Email: {user['Email']}, "
-              f"Role: {user['Role']}, Status: {user['Status']}")
+    users_data = load_users_data()
+    for index, user in enumerate(users_data, start=1):
+        print(f"{index}. Username: {user.get('Username', 'N/A')}, "
+              f"Password: {user.get('Password', 'N/A')}, "
+              f"First Name: {user.get('First Name', 'N/A')}, "
+              f"Last Name: {user.get('Last Name', 'N/A')}, "
+              f"Date of Birth: {user.get('Date of Birth', 'N/A')}, "
+              f"Contact Number: {user.get('Contact Number', 'N/A')}, "
+              f"Email: {user.get('Email', 'N/A')}, ")
 
-    user_management()
 
 
 def search_user_information():
     print("\nSearch User Information:")
-    search_term = input("Enter first or last name to search for users: ")
-
-    search_results = [user for user in user_data
-                      if search_term.lower() in user['First Name'].lower() or
-                      search_term.lower() in user['Last Name'].lower()]
+    search_term = input("Enter Username to search for users: ")
+    users_data = load_users_data()
+    search_results = [user for user in users_data
+                      if search_term.lower() in user.get('Username', '').lower()]
 
     if search_results:
         print(f"Search results for '{search_term}':")
         for index, user in enumerate(search_results, start=1):
-            print(f"{index}. Username: {user['Username']}, "
-                  f"First Name: {user['First Name']}, Last Name: {user['Last Name']}, "
-                  f"Email: {user['Email']}, Role: {user['Role']}, Status: {user['Status']}")
+            print(f"{index}. Username: {user.get('Username', 'N/A')}, "
+                  f"First Name: {user.get('First Name', 'N/A')}, Last Name: {user.get('Last Name', 'N/A')}, "
+                  f"Email: {user.get('Email', 'N/A')},")
     else:
         print(f"No users found for '{search_term}'.")
 
     user_management()
+
 
 
 def edit_user_information():
@@ -356,54 +431,68 @@ def edit_user_information():
     view_all_user_information()
 
     try:
-        username_to_edit = input("Enter the username you want to edit: ")
-        user = next((u for u in user_data if u['Username'] == username_to_edit), None)
+        username_index = int(input("Enter the index of user you want to edit: ")) - 1
+        users_data = load_users_data()
 
-        if user:
-            first_name = input(f"Current First Name: {user['First Name']}. Enter new First Name: ")
-            last_name = input(f"Current Last Name: {user['Last Name']}. Enter new Last Name: ")
-            email = input(f"Current Email: {user['Email']}. Enter new Email: ")
-            role = input(f"Current Role: {user['Role']}. Enter new Role: ")
-            status = input(f"Current Status: {user['Status']}. Enter new Status: ")
+        if 0 <= username_index < len(users_data):
+            user = users_data[username_index]
 
-            user['First Name'] = first_name
-            user['Last Name'] = last_name
-            user['Email'] = email
-            user['Role'] = role
-            user['Status'] = status
+            username = input(f"Current Username: {user.get('Username', 'N/A')}. Enter new Username: ")
+            password = input(f"Current Password: {user.get('Password', 'N/A')}. Enter new Password: ")
+            first_name = input(f"Current First Name: {user.get('First Name', 'N/A')}. Enter new First Name: ")
+            last_name = input(f"Current Last Name: {user.get('Last Name', 'N/A')}. Enter new Last Name: ")
+            db = input(f"Current Date of Birth: {user.get('Date of Birth', 'N/A')}. Enter new Date of Birth: ")
+            cn = input(f"Current Contact Number: {user.get('Contact Number', 'N/A')}. Enter new Contact Number: ")
+            email = input(f"Current Email: {user.get('Email', 'N/A')}. Enter new Email: ")
+            del users_data[username_index]
+            updated_user = {
+                'Username': username,
+                'Password': password,
+                'First Name': first_name,
+                'Last Name': last_name,
+                'Date of Birth': db,
+                'Contact Number': cn,
+                'Email': email
+            }
 
-            save_user_data()
+            users_data.append(updated_user)
+            save_user_data1(users_data)
 
             print("User edited successfully.")
         else:
-            print(f"No user found with username: {username_to_edit}.")
+            print(f"No user found with this index")
     except ValueError:
-        print("Invalid input. Please enter a valid username.")
+        print("Invalid input. Please enter a valid index.")
 
+def save_user_data1(users_data):
+    with open("users.txt", "w") as file:
+        for user in users_data:
+            file.write(str(user) + "\n")
 
 def delete_user_information():
     print("\nDelete User Functionality")
 
     view_all_user_information()
-
+    users_data = load_users_data()
     try:
-        username_to_delete = input("Enter the username you want to delete: ")
-        user = next((u for u in user_data if u['Username'] == username_to_delete), None)
-
-        if user:
-            user_data.remove(user)
-            save_user_data()
+        user_index = int(input("Enter the index of the user you want to delete: ")) - 1
+        if 0 <= user_index < len(users_data):
+            del users_data[user_index]
+            save_user_data1(users_data)
             print("User deleted successfully.")
         else:
-            print(f"No user found with username: {username_to_delete}.")
+            print("Invalid index. Please enter a valid index.")
     except ValueError:
-        print("Invalid input. Please enter a valid username.")
+        print("Invalid input. Please enter a valid index.")
+
+
 
 
 def save_user_data():
     with open("user_data.txt", "w") as file:
-        for user in user_data:
+        for user in users_data:
             file.write(str(user) + "\n")
+
 
 def admin_menu():
     while True:
@@ -427,6 +516,6 @@ def admin_menu():
             print("Invalid choice. Please try again.")
             admin_menu()
 
+
 if __name__ == "__main__":
     main.main()
-

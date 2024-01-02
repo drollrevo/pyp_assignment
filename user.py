@@ -404,4 +404,4 @@ def user_login():
 
 
 if __name__ == "__main__":
-    user_login()
+    main.main()()
