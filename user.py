@@ -1,9 +1,7 @@
 import main
 from datetime import datetime
 
-users_data = []
-booking_data = []
-halls_data = []
+
 
 
 def load_hall_type():
@@ -82,6 +80,9 @@ def registration():
     save_users_data()
     print("Registration successful!")
 
+users_data = []
+booking_data = []
+halls_data = []
 
 def login():
     main_choice = input("Do you have an account? (yes/no): ")

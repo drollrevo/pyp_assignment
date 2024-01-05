@@ -3,9 +3,7 @@ import user
 import datetime
 from datetime import datetime
 
-halls_data = []
-booking_data = []
-users_data = []
+
 
 
 def admin_login():
@@ -91,6 +89,9 @@ def enter_hall_information():
     print(f"Hall {hall_name} added successfully!\n")
     hall_management()
 
+halls_data = []
+booking_data = []
+users_data = []
 
 def view_all_hall_information():
     halls_data = user.load_hall_type()
